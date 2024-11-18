@@ -8,7 +8,7 @@ const Stopwatch = () => {
   
   const start = () => {
     if (!isRunning) {
-      setIsRunning(true);  4
+      setIsRunning(true);  
       intervalId.current = setInterval(() => {
         setTime((prevTime) => prevTime + 10); 
       }, 10); 
