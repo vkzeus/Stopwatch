@@ -1,42 +1,46 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const Stopwatch = () => {
-  const [time, setTime] = useState(0); 
-  const [isRunning, setIsRunning] = useState(false); 
-  const intervalId = useRef(null); 
+  const [time, setTime] = useState(0); // Time in milliseconds
+  const [isRunning, setIsRunning] = useState(false); // Tracks whether the stopwatch is running
+  const intervalRef = useRef(null); // Ref to store interval ID
 
-  
+  // Start the stopwatch
   const start = () => {
     if (!isRunning) {
-      setIsRunning(true);  
-      intervalId.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 10); 
-      }, 10); 
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setTime((prevTime) => prevTime + 10); // Increment by 10ms
+      }, 10); // Run every 10ms
     }
   };
 
-  
+  // Stop the stopwatch
   const stop = () => {
     if (isRunning) {
-      clearInterval(intervalId.current); 
-      setIsRunning(false); 
+      clearInterval(intervalRef.current); // Clear interval
+      setIsRunning(false);
     }
   };
 
-  
+  // Reset the stopwatch
   const reset = () => {
-    clearInterval(intervalId.current); 
-    setTime(0); 
-    setIsRunning(false); 
+    clearInterval(intervalRef.current); // Clear interval
+    setTime(0); // Reset time to 0
+    setIsRunning(false); // Set running state to false
   };
 
-  
-  const formatTime = (time) => {
-    const milliseconds = Math.floor((time % 1000) / 10); 
-    const seconds = Math.floor((time / 1000) % 60); 
-    const minutes = Math.floor((time / (1000 * 60)) % 60); 
-    const hours = Math.floor(time / (1000 * 60 * 60)); 
+  // Ensure interval cleanup on component unmount
+  useEffect(() => {
+    return () => clearInterval(intervalRef.current);
+  }, []);
 
+  // Format time in HH:MM:SS.ms
+  const formatTime = (time) => {
+    const milliseconds = Math.floor((time % 1000) / 10);
+    const seconds = Math.floor((time / 1000) % 60);
+    const minutes = Math.floor((time / (1000 * 60)) % 60);
+    const hours = Math.floor(time / (1000 * 60 * 60));
     return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds
@@ -45,29 +49,35 @@ const Stopwatch = () => {
   };
 
   return (
-    <div >
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>Stopwatch</h1>
-      <h2>{formatTime(time)}</h2>
+      <h2 data-testid="time-display">Time:{formatTime(time)}</h2>
 
-      
+      {/* Conditionally render Start and Stop buttons */}
       {!isRunning ? (
-        <button onClick={start} >
+        <button onClick={start} data-testid="start-button" style={buttonStyle}>
           Start
         </button>
       ) : (
-        <button onClick={stop} >
+        <button onClick={stop} data-testid="stop-button" style={buttonStyle}>
           Stop
         </button>
       )}
 
-     
-      <button onClick={reset} >
+      {/* Reset button */}
+      <button onClick={reset} data-testid="reset-button" style={buttonStyle}>
         Reset
       </button>
     </div>
   );
 };
 
-
+// Button styles
+const buttonStyle = {
+  padding: "10px 20px",
+  margin: "5px",
+  fontSize: "16px",
+  cursor: "pointer",
+};
 
 export default Stopwatch;
