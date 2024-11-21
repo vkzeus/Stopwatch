@@ -37,13 +37,9 @@ const Stopwatch = () => {
 
   // Format time in HH:MM:SS.ms
   const formatTime = (time) => {
-    const milliseconds = Math.floor((time % 1000) / 10);
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / (1000 * 60)) % 60);
-    const hours = Math.floor(time / (1000 * 60 * 60));
-    return `${hours.toString().padStart(2, "0")}:${minutes
-      .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${milliseconds
+    return `${minutes.toString().padStart(2, "0")}:${seconds
       .toString()
       .padStart(2, "0")}`;
   };
