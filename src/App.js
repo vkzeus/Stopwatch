@@ -1,41 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const Stopwatch = () => {
   const [time, setTime] = useState(0); // Time in milliseconds
-  const [isRunning, setIsRunning] = useState(false); // Tracks whether the stopwatch is running
-  const intervalRef = useRef(null); // Ref to store interval ID
+  const [isRunning, setIsRunning] = useState(false); // Stopwatch state
+  const [intervalId, setIntervalId] = useState(null); // Stores interval ID
 
-  // Start the stopwatch
-  const start = () => {
-    if (!isRunning) {
-      setIsRunning(true);
-      intervalRef.current = setInterval(() => {
-        setTime((prevTime) => prevTime + 10); // Increment by 10ms
-      }, 10); // Run every 10ms
-    }
-  };
-
-  // Stop the stopwatch
-  const stop = () => {
-    if (isRunning) {
-      clearInterval(intervalRef.current); // Clear interval
-      setIsRunning(false);
-    }
-  };
-
-  // Reset the stopwatch
-  const reset = () => {
-    clearInterval(intervalRef.current); // Clear interval
-    setTime(0); // Reset time to 0
-    setIsRunning(false); // Set running state to false
-  };
-
-  // Ensure interval cleanup on component unmount
-  useEffect(() => {
-    return () => clearInterval(intervalRef.current);
-  }, []);
-
-  // Format time in HH:MM:SS.ms
+  // Format time to MM:SS
   const formatTime = (time) => {
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / (1000 * 60)) % 60);
@@ -44,36 +14,49 @@ const Stopwatch = () => {
       .padStart(2, "0")}`;
   };
 
+  // Start the stopwatch
+  const handleStart = () => {
+    if (!isRunning) {
+      setIsRunning(true);
+      const id = setInterval(() => {
+        setTime((prevTime) => prevTime + 100);
+      }, 100); // Update time every 100ms
+      setIntervalId(id);
+    }
+  };
+
+  // Stop the stopwatch
+  const handleStop = () => {
+    if (isRunning) {
+      setIsRunning(false);
+      clearInterval(intervalId);
+    }
+  };
+
+  // Reset the stopwatch
+  const handleReset = () => {
+    setIsRunning(false);
+    clearInterval(intervalId);
+    setTime(0);
+  };
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => clearInterval(intervalId);
+  }, [intervalId]);
+
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div>
       <h1>Stopwatch</h1>
-      <h2 data-testid="time-display">Time:{formatTime(time)}</h2>
-
-      {/* Conditionally render Start and Stop buttons */}
+      <h2>Time: {formatTime(time)}</h2>
       {!isRunning ? (
-        <button onClick={start} data-testid="start-button" style={buttonStyle}>
-          Start
-        </button>
+        <button onClick={handleStart}>Start</button>
       ) : (
-        <button onClick={stop} data-testid="stop-button" style={buttonStyle}>
-          Stop
-        </button>
+        <button onClick={handleStop}>Stop</button>
       )}
-
-      {/* Reset button */}
-      <button onClick={reset} data-testid="reset-button" style={buttonStyle}>
-        Reset
-      </button>
+      <button onClick={handleReset}>Reset</button>
     </div>
   );
-};
-
-// Button styles
-const buttonStyle = {
-  padding: "10px 20px",
-  margin: "5px",
-  fontSize: "16px",
-  cursor: "pointer",
 };
 
 export default Stopwatch;
