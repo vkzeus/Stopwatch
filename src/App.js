@@ -1,24 +1,22 @@
 import React, { useState, useEffect } from "react";
 
 const Stopwatch = () => {
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(0); // Time in milliseconds
   const [isRunning, setIsRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
 
   const formatTime = (time) => {
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / (1000 * 60)) % 60);
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handleStart = () => {
     if (!isRunning) {
       setIsRunning(true);
       const id = setInterval(() => {
-        setTime((prevTime) => prevTime + 100);
-      }, 100);
+        setTime((prevTime) => prevTime + 1000);
+      }, 1000);
       setIntervalId(id);
     }
   };
@@ -37,7 +35,7 @@ const Stopwatch = () => {
   };
 
   useEffect(() => {
-    return () => clearInterval(intervalId);
+    return () => clearInterval(intervalId); // Cleanup on component unmount
   }, [intervalId]);
 
   return (
