@@ -8,7 +8,7 @@ const Stopwatch = () => {
   const formatTime = (time) => {
     const seconds = Math.floor((time / 1000) % 60);
     const minutes = Math.floor((time / (1000 * 60)) % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2,"0")}`;
   };
 
   const handleStart = () => {
@@ -35,7 +35,7 @@ const Stopwatch = () => {
   };
 
   useEffect(() => {
-    return () => clearInterval(intervalId); // Cleanup on component unmount
+    return () => clearInterval(intervalId); 
   }, [intervalId]);
 
   return (
